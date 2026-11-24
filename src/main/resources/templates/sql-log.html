@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('SQL 로그')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h1>SQL 로그</h1>
+    </div>
+    <form th:action="@{/sql-log/clear}" method="post"><button class="btn btn-secondary" type="submit">지우기</button></form>
+  </div>
+  <div class="legend">
+    <span style="color:#3b82c4">조회</span><span style="color:#9b5fd0">프로시저 호출</span><span style="color:#c08a2e">변경</span>
+    <span style="color:#d0663f">트리거</span><span style="color:#23774a">성공</span><span style="color:#c62828">오류</span>
+  </div>
+  <div class="log">
+    <div th:if="${#lists.isEmpty(entries)}" class="info">아직 기록이 없습니다.</div>
+    <div th:each="e : ${entries}" th:class="${e.kind}" class="call"><span class="t" th:text="${e.time}">16:59:02</span><span th:text="${e.text}">{call SP_FIND_ELIGIBLE_BENEFITS(?, ?)}</span></div>
+  </div>
+</main>
+</body>
+</html>

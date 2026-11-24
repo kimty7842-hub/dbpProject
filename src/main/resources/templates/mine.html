@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('내 혜택')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+
+  <div class="page-head">
+    <div>
+      <h1>내 혜택</h1>
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="내 혜택 보기">
+    <a th:href="@{/mine(tab='grant')}" href="#" th:classappend="${tab == 'grant'} ? 'on'" th:text="'지급 이력 ' + ${#lists.size(grants)}">지급 이력 2</a>
+    <a th:href="@{/mine(tab='usage')}" href="#" th:classappend="${tab == 'usage'} ? 'on'" th:text="'사용 이력 ' + ${#lists.size(usages)}">사용 이력 1</a>
+  </nav>
+
+  <!-- 지급 이력 (BENEFIT_GRANT ⋈ BENEFIT) -->
+  <section th:if="${tab == 'grant'}">
+    <div class="empty" th:if="${#lists.isEmpty(grants)}">아직 응모한 혜택이 없습니다. <a th:href="@{/benefits}" href="#">혜택 찾기</a>에서 응모해 보시기 바랍니다.</div>
+    <div class="table-wrap" th:unless="${#lists.isEmpty(grants)}">
+      <table>
+        <thead><tr><th>지급번호</th><th>혜택명</th><th>선물 종류</th><th>지급일자</th><th>지급 상태</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="g : ${grants}">
+          <td class="num" th:text="${g.no}">3</td>
+          <td th:text="${g.benefitName}">헌혈유공장 은장 (30회)</td>
+          <td th:text="${g.giftType}">유공장</td>
+          <td class="num" th:text="${g.dateText}">2026.10.20</td>
+          <td class="nowrap" th:text="${g.status}">지급 완료</td>
+          <td style="text-align:right">
+            <!-- ⑤ 사용: UPDATE → 트리거가 사용 이력 자동 기록 -->
+            <form th:if="${g.granted}" th:action="@{/mine/{no}/use(no=${g.no})}" method="post" onsubmit="return confirm('이 혜택을 사용하시겠습니까? 사용하면 되돌릴 수 없습니다.');">
+              <input type="hidden" name="name" th:value="${g.benefitName}">
+              <button class="btn btn-primary btn-sm" type="submit">사용하기</button>
+            </form>
+            <!-- ⑤ 응모 취소: DELETE → 트리거가 삭제 가능 여부 검사 -->
+            <form th:if="${g.waiting}" th:action="@{/mine/{no}/cancel(no=${g.no})}" method="post" onsubmit="return confirm('응모를 취소하시겠습니까?');">
+              <input type="hidden" name="name" th:value="${g.benefitName}">
+              <button class="btn btn-danger btn-sm" type="submit">응모 취소</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="margin-top:12px">지급 대기 혜택은 헌혈의집에서 받을 수 있고, 받기 전에는 응모를 취소할 수 있습니다. 지급 완료된 혜택은 사용하기를 누르면 사용 처리됩니다.</p>
+  </section>
+
+  <!-- 사용 이력 (BENEFIT_USAGE ⋈ BENEFIT) : 트리거가 기록 -->
+  <section th:if="${tab == 'usage'}">
+    <div class="empty" th:if="${#lists.isEmpty(usages)}">아직 사용한 혜택이 없습니다.</div>
+    <div class="table-wrap" th:unless="${#lists.isEmpty(usages)}">
+      <table>
+        <thead><tr><th>사용번호</th><th>혜택명</th><th>선물 종류</th><th>사용일자</th></tr></thead>
+        <tbody>
+        <tr th:each="u : ${usages}">
+          <td class="num" th:text="${u.no}">1</td>
+          <td th:text="${u.benefitName}">첫 헌혈 환영 선물</td>
+          <td th:text="${u.giftType}">기념품</td>
+          <td class="num" th:text="${u.dateText}">2026.11.13</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="margin-top:12px">혜택을 사용하면 트리거가 사용 이력을 자동으로 기록합니다.</p>
+  </section>
+</main>
+</body>
+</html>

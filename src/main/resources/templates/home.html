@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('홈')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+
+  <div class="page-head">
+    <div>
+      <h1 th:text="${me.name} + '님의 헌혈 기록'">김민수님의 헌혈 기록</h1>
+    </div>
+  </div>
+
+  <!-- 요약 -->
+  <section class="band">
+    <div>
+      <div class="stat-label">누적 헌혈</div>
+      <div class="figure"><span th:text="${donationCount}">29</span><small>회</small></div>
+      <span class="muted" th:text="${lastDate} != null ? '마지막 헌혈 ' + ${lastDate} : '아직 헌혈 기록이 없습니다'">마지막 헌혈 2026.10.15</span>
+    </div>
+    <div>
+      <div class="stat-label">지금 응모할 수 있는 혜택</div>
+      <div class="figure"><span th:text="${#lists.size(eligible)}">1</span><small>개</small></div>
+      <a th:if="${!#lists.isEmpty(eligible)}" th:href="@{/benefits/eligible}" href="#">혜택 찾기에서 보기</a>
+    </div>
+    <div>
+      <div class="stat-label">사용할 수 있는 혜택</div>
+      <div class="figure"><span th:text="${usableCount}">1</span><small>개</small></div>
+      <span class="muted" th:if="${waitingCount > 0}" th:text="'지급 대기 ' + ${waitingCount} + '개'">지급 대기 1개</span>
+      <a th:if="${waitingCount == 0 and usableCount > 0}" th:href="@{/mine}" href="#">내 혜택 보기</a>
+    </div>
+    <div th:if="${next != null}">
+      <div class="stat-label">다음 혜택까지</div>
+      <div class="figure"><span th:text="${next.benefit.requiredCount - next.myCount}">1</span><small>회 남음</small></div>
+      <div class="bar"><i th:style="'width:' + ${next.percent} + '%'" style="width:96%"></i></div>
+      <span class="muted" th:text="${next.benefit.name}">헌혈유공장 은장 (30회)</span>
+    </div>
+    <div th:if="${next == null}">
+      <div class="stat-label">다음 혜택까지</div>
+      <div class="figure">0<small>회</small></div>
+      <span class="muted">지금 응모할 수 있는 혜택을 먼저 확인하시기 바랍니다</span>
+    </div>
+  </section>
+
+  <div class="cols">
+    <!-- 저장 프로시저 결과 -->
+    <section>
+      <div class="section-title"><h2>지금 응모할 수 있는 혜택</h2></div>
+      <div class="empty" th:if="${#lists.isEmpty(eligible)}">지금 응모할 수 있는 혜택이 없습니다. 헌혈을 이어 가면 새 혜택이 열립니다.</div>
+      <div class="card rows" th:unless="${#lists.isEmpty(eligible)}">
+        <div class="row" th:each="e : ${eligible}">
+          <div class="grow">
+            <h3 th:text="${e.benefit.name}">혈장 헌혈 5회 감사 쿠폰</h3>
+            <span class="muted" th:text="${e.benefit.giftType} + ', ' + ${e.benefit.periodText}">모바일 쿠폰, 상시</span>
+          </div>
+          <form th:action="@{/benefits/{no}/apply(no=${e.benefit.no})}" method="post" onsubmit="return confirm('이 혜택에 응모하시겠습니까?');">
+            <input type="hidden" name="back" value="/">
+            <button class="btn btn-primary" type="submit">응모하기</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title"><h2>최근 헌혈</h2><a th:if="${donationCount > 0}" th:href="@{/donations}" href="#">전체 보기</a></div>
+      <div class="empty" th:if="${donationCount == 0}">
+        <p>아직 헌혈 기록이 없습니다. 헌혈증을 받으셨다면 기록을 추가해 주시기 바랍니다.</p>
+        <a class="btn btn-primary" th:href="@{/donations/new}" href="#">헌혈 기록 추가</a>
+      </div>
+      <div class="card rows" th:unless="${donationCount == 0}">
+        <div class="row" th:each="d, st : ${recent}">
+          <span class="no" th:text="${donationCount - st.index} + '번째'">29번째</span>
+          <span class="grow" th:text="${d.type} + ' 헌혈, ' + ${d.region}">전혈 헌혈, 서울</span>
+          <span class="muted" th:text="${d.dateText}">2026.10.15</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('오류')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body>
+<th:block th:if="${loginName}"><header th:replace="~{fragments/layout :: topbar}"></header></th:block>
+<main class="page narrow">
+  <div class="card">
+    <h1>처리하지 못했습니다</h1>
+    <p class="muted" style="margin:10px 0 18px" th:text="${message}">데이터베이스에 연결할 수 없습니다.</p>
+    <a class="btn btn-secondary" th:href="@{/}" href="#">홈으로</a>
+  </div>
+</main>
+</body>
+</html>

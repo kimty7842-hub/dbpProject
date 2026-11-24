@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('헌혈 기록')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../../static/css/app.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+
+  <div class="page-head">
+    <div>
+      <h1>헌혈 기록</h1>
+      <p th:text="${#lists.isEmpty(donations)} ? '아직 헌혈 기록이 없습니다. 헌혈증을 받으셨다면 기록을 추가해 주시기 바랍니다.' : '모두 ' + ${#lists.size(donations)} + '번 헌혈했습니다.'">모두 29번 헌혈했습니다.</p>
+    </div>
+    <a class="btn btn-primary" th:href="@{/donations/new}" href="form.html">헌혈 기록 추가</a>
+  </div>
+
+  <div class="table-wrap" th:unless="${#lists.isEmpty(donations)}">
+    <table>
+      <thead><tr><th>회차</th><th>헌혈번호</th><th>헌혈일자</th><th>헌혈 종류</th><th>헌혈 지역</th><th></th></tr></thead>
+      <tbody>
+      <tr th:each="d, st : ${donations}">
+        <td th:text="(${#lists.size(donations)} - ${st.index}) + '번째'">29번째</td>
+        <td class="num" th:text="${d.no}">29</td>
+        <td class="num" th:text="${d.dateText}">2026.10.15</td>
+        <td th:text="${d.type}">전혈</td>
+        <td th:text="${d.region}">서울</td>
+        <td style="text-align:right; white-space:nowrap">
+          <a class="btn btn-secondary btn-sm" th:href="@{/donations/{no}/edit(no=${d.no})}" href="form.html">수정</a>
+          <form th:action="@{/donations/{no}/delete(no=${d.no})}" method="post" onsubmit="return confirm('이 헌혈 기록을 삭제하시겠습니까? 삭제하면 되돌릴 수 없습니다.');">
+            <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>

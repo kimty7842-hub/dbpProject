@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<!-- 모든 화면이 같이 쓰는 조각: head, 상단 메뉴, 알림 -->
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title} + ' - 헌혈플러스'">헌혈플러스</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" th:href="@{/css/app.css(v=2)}" href="../../static/css/app.css">
+</head>
+<body>
+
+<header class="topbar" th:fragment="topbar">
+  <div class="topbar__in">
+    <a class="brand" th:href="@{/}" href="#">헌혈플러스</a>
+    <nav class="nav" aria-label="메뉴">
+      <a th:href="@{/}" href="#" th:classappend="${active == 'home'} ? 'on'">홈</a>
+      <a th:href="@{/benefits}" href="#" th:classappend="${active == 'benefits'} ? 'on'">혜택 찾기</a>
+      <a th:href="@{/mine}" href="#" th:classappend="${active == 'mine'} ? 'on'">내 혜택</a>
+      <a th:href="@{/donations}" href="#" th:classappend="${active == 'donations'} ? 'on'">헌혈 기록</a>
+      <a th:href="@{/profile}" href="#" th:classappend="${active == 'profile'} ? 'on'">내 정보</a>
+    </nav>
+    <div class="who">
+      <a th:href="@{/sql-log}" href="#" th:classappend="${active == 'sql'} ? 'on'">SQL 로그</a>
+      <span><b th:text="${loginName}">김민수</b>님</span>
+      <form th:action="@{/logout}" method="post"><button class="btn btn-secondary btn-sm" type="submit">로그아웃</button></form>
+    </div>
+  </div>
+</header>
+
+<div th:fragment="flash" th:remove="tag">
+  <div class="flash flash-ok" role="status" th:if="${notice}">
+    <span th:text="${notice}">등록했습니다.</span>
+    <a th:if="${noticeLink}" th:href="@{${noticeLink}}" href="#">혜택 보러 가기</a>
+  </div>
+  <div class="flash flash-err" role="alert" th:if="${error}" th:text="${error}">오류 메시지</div>
+</div>
+
+</body>
+</html>

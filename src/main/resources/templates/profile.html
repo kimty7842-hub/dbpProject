@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('내 정보')}">
+  <meta charset="UTF-8"><link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page narrow">
+  <div th:replace="~{fragments/layout :: flash}"></div>
+
+  <div class="page-head">
+    <div>
+      <h1>내 정보</h1>
+      <p>회원 정보를 확인하고 고칠 수 있습니다.</p>
+    </div>
+  </div>
+
+  <form class="card form" th:action="@{/profile}" method="post">
+    <h2>회원 정보</h2>
+    <label class="field"><span>아이디</span><input th:value="${member.id}" value="user01" disabled></label>
+    <label class="field"><span>이름</span><input name="name" th:value="${member.name}" value="김민수" autocomplete="name" required></label>
+    <label class="field"><span>연락처</span><input name="phone" th:value="${member.phone}" value="010-2000-5000" autocomplete="tel" required></label>
+    <div class="field"><span>주소</span>
+      <div class="addr">
+        <select name="city" aria-label="시, 도">
+          <option th:each="c : ${cities}" th:value="${c}" th:text="${c}" th:selected="${c == city}">서울특별시</option>
+        </select>
+        <input name="detail" th:value="${detail}" value="강남구 테헤란로 12" aria-label="상세 주소" required>
+      </div>
+    </div>
+    <hr style="border:0; border-top:1px solid var(--rule); margin:6px 0">
+    <div><h3>비밀번호 변경</h3></div>
+    <div class="two">
+      <label class="field"><span>새 비밀번호</span><input type="password" name="newPassword" autocomplete="new-password"></label>
+      <label class="field"><span>새 비밀번호 확인</span><input type="password" name="passwordConfirm" autocomplete="new-password"></label>
+    </div>
+    <div style="display:flex; justify-content:flex-end"><button class="btn btn-primary" type="submit">저장하기</button></div>
+  </form>
+
+  <div class="card danger-zone">
+    <div>
+      <h3>회원 탈퇴</h3>
+      <p class="muted">탈퇴하면 헌혈 기록, 받은 혜택, 사용 기록이 모두 삭제됩니다.</p>
+    </div>
+    <form th:action="@{/profile/withdraw}" method="post" onsubmit="return confirm('정말 탈퇴하시겠습니까? 모든 기록이 삭제되고 되돌릴 수 없습니다.');">
+      <button class="btn btn-danger" type="submit">회원 탈퇴</button>
+    </form>
+  </div>
+</main>
+</body>
+</html>
