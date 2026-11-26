@@ -28,17 +28,17 @@ public class SpringConfig {
 
     @Bean
     public BloodRepository bloodRepository() {
-        switch (repositoryType.trim().toLowerCase()) {
-            case "jdbc":
-                return new JdbcBloodRepository(dataSource);
-            case "jdbctemplate":
-                return new JdbcTemplateBloodRepository(dataSource);
-            default:
-                return new MemoryBloodRepository();
-        }
+//        switch (repositoryType.trim().toLowerCase()) {
+//            case "jdbc":
+//                return new JdbcBloodRepository(dataSource);
+//            case "jdbctemplate":
+//                return new JdbcTemplateBloodRepository(dataSource);
+//            default:
+//                return new MemoryBloodRepository();
+//        }
         // 교수님 예제 방식으로 쓰려면 위 switch 대신 아래 중 하나만 남겨도 된다.
         // return new MemoryBloodRepository();
         // return new JdbcBloodRepository(dataSource);
-        // return new JdbcTemplateBloodRepository(dataSource);
+         return new JdbcTemplateBloodRepository(dataSource);
     }
 }
